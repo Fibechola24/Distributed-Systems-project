@@ -12,4 +12,49 @@ public class Read_file {
         System.out.println("file path: ");
     }
 }
+package com.hsrw.pds_practice02;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Scanner;
+
+public class ReadURL {
+    public static void main(String [] args) throws IOException {
+        String textLine, urlText;
+        Scanner scanner =  new Scanner(System.in);
+        // Read the url
+        System.out.println("URL: ");
+        // The user must insert in the command line the url of a .txt file e.g. http://textfiles.com/stories/bluebrd.txt
+        urlText = scanner.nextLine();
+        // Declare a BufferedReader in order to read text from a character-input stream.
+        // Buffering characters provide an efficient reading of characters.
+        BufferedReader bufferedReader = null;
+        URL url = new URL(urlText);
+        try {
+            // open the text file from URL
+
+            bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+        } catch(Exception e) {
+            // an error ocurred while openning the file
+            System.out.println("Impossible to open the selected file " + urlText);
+            System.out.println("Program terminated");
+            return;
+        }
+        // read the first line of the text file
+        textLine = bufferedReader.readLine();
+        // While text line is not null
+        // readLine returns null at the end of the file
+        while(textLine != null) {
+            // print line in the command line
+            System.out.println(textLine);
+            // read the next line of the text file
+            textLine = bufferedReader.readLine();
+        }
+        // Close the file
+        bufferedReader.close();
+    }
+}
 
