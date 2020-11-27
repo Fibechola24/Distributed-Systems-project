@@ -88,3 +88,75 @@ public class Simple {
 
 }
 
+package com.hsrw.pds_practice02;
+
+/**
+ *
+ * @author Pedro Ribeiro
+ */
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Tennis_pvp_generator {
+    private static ArrayList<String> playersList = new ArrayList<String>(); // ArrayList to store the players names coming from the .txt file
+
+    /**
+     * The {@code main} method picks the list of players names existing in a txt file and randomly generates a set of Player VS Player games.
+     *
+     * <p> In practice the file tennisPlayer.txt is accessed.
+     * Each line of the tennisPLayer.txt has a tennis player name.
+     * The line of this .txt file populate an arrayList of Strings.
+     * Then the program loops through the arrayList and picks randomly 2 indexes;
+     * prints the corresponding strings in a format "Random Player1 VS Random Player2";
+     * and removes the two selected indexes.
+     * The loop stops when the arrayList is empty.
+     *
+     *  @exception  IOException  if an I/O error occurs.
+     */
+    public static void main(String[] args) throws IOException {
+        try {
+            InputStream is = new FileInputStream("tennisPlayers.txt");  // create a new FileInputStream object in order to read the stream of raw bytes corresponding the content of tennisPlayer.txt
+
+            InputStreamReader isr = new InputStreamReader(is);  // create a new InputStreamReader in order to bridge from byte stream to character stream (It reads bytes and decodes them into characters)
+            BufferedReader br = new BufferedReader(isr);    // create a new BufferedReader in order to read text from a character-input stream ( Buffering characters provide an efficient reading of characters).
+            String playerName = br.readLine();  // Attributing the first line of text in the BufferedReader to the String variable {@code playerName}.
+            while (playerName != null) {    //loop to obtain all the texts lines existing in the BufferedReader (after the last line the string {@code playerName} will be null and that is the coindition to stop the cycle).
+                //if (playerName.matches(".*\\w.*")) // test if the String {@code playerName} has at least one alphanumeric character
+                    playersList.add(playerName); // add the String {@code playerName} to the ArrayList {@code playersList}
+                playerName = br.readLine(); // Attributing the next line of text in the BufferedReader to the String variable {@code playerName}.
+            }
+            br.close(); // close the BufferedReader
+
+            while (playersList.size() >= 2) // while the size of the arrayList {@code playersList} is bigger or equal to 2 two players are randomly selected from the arrayList {@code playersList} and printed to the console
+
+            System.out.println(getRandomPlayer() + "  VS  " + getRandomPlayer());
+
+            if (!playersList.isEmpty()) // if the arrayList {@code playersList} is not empty (just happen if the size of the arrayList {@code playersList} is an odd number e.g. 17)
+                System.out.println("The Player " + playersList.get(0) + " has no opponent!");   // Print to the console that the last player has no opponent
+        }
+        catch (FileNotFoundException ex){
+            System.err.println("File doesn't exist");   // If the file "tennisPlayers.txt" do not exist print this fact to the console
+        }
+    }
+
+    /**
+     * In the {@code getRandomPlayer} method a player is randomly selected from the arrayList {@code playersList}.
+     * Then the playername is removed from the {@code playersList}.
+     *
+     * @return     the string corresponding to a player name randomly selected from the arrayList {@code playersList}.
+     *
+     */
+    private static String getRandomPlayer(){
+        int playerIndex = new Random().nextInt(playersList.size()); //Attribute a integer number between 0 (inclusive) and the the size of the arrayList {@code playersList} (exclusive) to the integer variable {@code playerIndex}
+        String playerName = playersList.get(playerIndex);   // Attribute the string corresponding the index randomly selected in the arrayList {@code playersList} to the String {@code playerName}
+        playersList.remove(playerIndex);    // Remove the string corresponding the index randomly selected in the arrayList {@code playersList}
+        return playerName;  //return the String {@code playerName}
+    }
+}
+
+
+
+
+
