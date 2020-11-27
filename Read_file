@@ -58,3 +58,33 @@ public class ReadURL {
     }
 }
 
+
+package com.hsrw.pds_practice02;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public class Simple {
+    public static void main(String[] args) throws IOException {
+        InputStream is = new FileInputStream("newFile.txt");
+        int b = is.read();
+        System.out.println(b);
+        System.out.println((char)b);
+        InputStreamReader isr = new InputStreamReader(is);
+        char c;
+        int i;
+        System.out.println("Character Read::::: "+(char)isr.read());
+        while((i = isr.read())!=-1) {
+
+            // int to character
+            c = (char)i;
+
+            // print char
+            System.out.println("Character Read: "+c);
+        }
+    }
+
+}
+
