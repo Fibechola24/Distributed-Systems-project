@@ -1,0 +1,15 @@
+package  com.okpanachi.javaIOPractice;
+
+import java.io.*;
+import java.util.Scanner;
+
+public class Read_file {
+    public static void main(String [] args) throws IOException {
+        String textLine, filePath;
+        Scanner scanner = new Scanner (System.in);
+
+        //read the path of a text file that is existing in the operating system
+        System.out.println("file path: ");
+    }
+}
+
