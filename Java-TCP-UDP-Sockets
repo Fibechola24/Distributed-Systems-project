@@ -1,0 +1,258 @@
+package com.hsrw.javaSocket.ex3;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.io.IOException;
+import java.net.Socket;
+
+
+public class Tcp_Server_Socket {
+    //TCP_Server wait for client message string (UTF)
+// and reply with a message string (UTF)
+public static void main(String[] args) throws IOException {
+
+    //Register service in the port 1234 and wait for connections.
+    ServerSocket server = new ServerSocket(1234); //port should be above i200
+    System.out.println("wait for connections");
+    Socket connection = server.accept();  //at this point it will wait for client who wants to connect to the server socket or it is listening for client. the next line of code will rin if there is a client
+    System.out.println("TCP Client connected " + connection);
+
+    //Setting up input output streams
+    DataInputStream inputStr = new DataInputStream( new BufferedInputStream(connection.getInputStream())); //as soon as the connection is established the getInputStream method will  retrieve any message that is sent to the server through the sockets from the client
+DataOutputStream outputStr = new DataOutputStream(connection.getOutputStream()); // server uses the outputStream method to send data in this case (message) back to the client
+
+
+// Start communication
+String message = inputStr.readUTF();    // server uses the readUTF method to read message received from  the client. This character will be saved as a string in message
+System.out.println("TCP Client> " + message);
+
+outputStr.writeUTF("Hello! I am the TCP Server!");
+// Close streams and socket.      //then we close the streams
+inputStr.close();
+outputStr.close();
+connection.close();
+server.close();
+} 
+}
+
+
+
+package com.hsrw.javaSocket.ex3;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+
+public class TCP_Client {
+    public static void main(String[] args) throws IOException {
+        int port = 1234;  //exactly the port on the server socket
+        String ip = "192.168.0.18"; //ip of the server in the network  //local host i.p. //for this example, server and client are in the same computer. if server is in a different computer then we have to indicate the ip address of the server here
+        try { // Connect with server
+
+            Socket connection = new Socket(ip, port); //create a socket connection, which will take the parameter of ip and the port number
+            System.out.println("Connected! " + connection);
+            // Setting up input and output streams
+            DataOutputStream outputStr = new DataOutputStream( connection.getOutputStream());  //outPutStream send information to the server
+
+            DataInputStream inputStr = new DataInputStream(new BufferedInputStream(connection.getInputStream()));  //InputStream receives information from the server
+
+            // Start communication
+            outputStr.writeUTF("Hi, I'm the client!");
+            outputStr.flush(); //this forces any buffered output to be written to the stream. i.e send the "Im the client" to the socket
+
+            String message = inputStr.readUTF();   //here we are waiting for feedback from the server
+            System.out.println("TCP_Server> " + message);
+
+            // Close streams and socket
+            outputStr.close();
+            inputStr.close();
+            connection.close(); }
+
+        catch (IOException ex)
+        { System.out.println("Connection error! " + ex); }
+    }
+   /**
+
+                * What is the role of IO.DataInputStream and IO.DataOutputStream in this interaction
+                * Ans:
+ *These are Processes used by the server and client to send information to each other.
+ *The server uses the OutStream to send information to the client and uses the inputStream to receive information from the client
+ *likewise the client sends information to the server using the outputStream and receives data or information from the server using the inputStreamit
+
+
+                * Is the TCP_Server process alive after answering to a client request?
+                * Ans:
+ * \No, the server was designed to only answer one client request after that the server closes
+ * the server socket and client socket was closed so the tcp server process is no longer alive.
+ **/
+
+}
+
+
+
+package com.hsrw.javaSocket.ex3;
+
+import java.io.*;
+import java.net.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
+public class TCP_Server_Time_Provider {
+    /**
+     * Tcp server wait for client message then reply with the current date and time
+     */
+
+    private static final DateTimeFormatter dft = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+    public static void main (String [] args) throws IOException{
+        //Register service in the port 1234 and wait for connection
+        ServerSocket server = new ServerSocket(1234); //port should be above i200
+        System.out.println("wait for connections");
+        Socket connection = server.accept();  //at this point it will wait for client who wants to connect to the server socket or it is listening for client. the next line of code will rin if there is a client
+        System.out.println("TCP Client connected " + connection);
+
+        //Setting up input output streams
+        DataInputStream inputStr = new DataInputStream( new BufferedInputStream(connection.getInputStream())); //as soon as the connection is established the getInputStream method will  retrieve any message that is sent to the server through the sockets from the client
+        DataOutputStream outputStr = new DataOutputStream(connection.getOutputStream()); // server uses the outputStream method to send data in this case (message) back to the client
+
+        // Start communication
+        String message = inputStr.readUTF();    // server uses the readUTF method to read message received from  the client. This character will be saved as a string in message
+        System.out.println("TCP Client> " + message);
+        LocalDateTime currentHour = LocalDateTime.now();
+        outputStr.writeUTF("The current time is "+ dft.format(currentHour));
+// Close streams and socket.      //then we close the streams
+        inputStr.close();
+        outputStr.close();
+        connection.close();
+        server.close();
+    }
+
+}
+
+
+package com.hsrw.javaSocket.ex3;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+public class TcpClient_TimeReceiver {
+    public static void main(String[] args) throws IOException {
+        int port = 1234;  //exactly the port on the server socket
+        String ip = "192.168.0.18";
+
+        try { // Connect with server
+
+            Socket connection = new Socket(ip, port); //create a socket connection,
+            System.out.println("Connected! " + connection);
+            // Setting up input and output streams
+            DataOutputStream outputStr = new DataOutputStream( connection.getOutputStream());  //outPutStream send information to the server
+            DataInputStream inputStr = new DataInputStream(new BufferedInputStream(connection.getInputStream()));  //InputStream receives information from the server
+
+            // Start communication
+            outputStr.writeUTF("Hi, What is the time? ");
+            outputStr.flush(); //this forces any buffered output to be written to the stream. i.e send the "Im the client" to the socket
+
+            String message = inputStr.readUTF();   //here we are waiting for feedback from the server
+            System.out.println("TCP_Server> " + message);
+
+            // Close streams and socket
+            outputStr.close();
+            inputStr.close();
+            connection.close();
+        } catch (IOException ex) {
+            System.out.println("Connection error! " + ex);
+        }
+        }
+}
+
+
+
+package com.hsrw.javaSocket.ex3;
+
+import java.io.IOException;
+import java.net.*;
+
+public class UDP_Client {
+    public static void main(String[] args) throws SocketException, UnknownHostException, IOException {
+        DatagramSocket client = new DatagramSocket(1024);
+        //client.getSoTimeout();
+
+        byte[] receivedData = new byte[1024];
+        byte[] sentData;
+
+        InetAddress address = InetAddress.getByName("localhost");
+
+        String message = "hello, I am the TCP_Client!";
+
+        sentData = message.getBytes();
+
+        DatagramPacket sentPacket = new DatagramPacket(sentData, sentData.length, address, 1234);
+
+        client.send(sentPacket);
+
+        DatagramPacket receivedPacket = new DatagramPacket(receivedData, receivedData.length);
+
+        client.receive(receivedPacket);
+
+        String received = new String(receivedPacket.getData());
+
+        System.out.println("Received message: " + received);
+        client.close();
+    }
+}
+
+package com.hsrw.javaSocket.ex3;
+
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+public class UDP_Server_Socket {
+
+    //udp is a connectionless socket between server and client
+    //here the client send dataGram to the server,
+    //they maybe unreliable, data loss, or not arriving in the right sequence or order
+ public static void main(String[] args) throws SocketException, IOException {
+     DatagramSocket server = new DatagramSocket(1234); //create the dataGram socket
+
+     byte[] receivedData = new byte[1024]; //create byte array received by the server. which is  sent from the  client
+
+     byte[] sentData; //creates byte array of data that will be sent from the server and received by the client
+
+     System.out.println("listening at 1234 Port"); //server is listening on the port 1234
+
+     while (true) {
+         DatagramPacket receivedPacket = new DatagramPacket(receivedData, receivedData.length);  //this creates a datagram packet
+
+     server.receive(receivedPacket);
+
+     //when server receives the packet, we convert those byte to string in the next line
+
+     String message = new String(receivedPacket.getData());
+
+     System.out.println("Received: " + message);
+
+     InetAddress ipOrigin = receivedPacket.getAddress();  //get the ip address of the client
+
+     int port = receivedPacket.getPort(); //get the port number of the receivedPacket i.e port number of the client
+
+     sentData = "Hello, I am the TCP_Server\n".getBytes(); //it will convert this string to an array of bytes that will be sent to the client
+
+     DatagramPacket sentPacket = new DatagramPacket(sentData, sentData.length, ipOrigin, port);
+
+     server.send(sentPacket);  //send packet  to client
+     }
+ }
+}
+
